@@ -20,8 +20,10 @@ namespace Core
 		private const string kUIPrefabPath = "UI/Prefab/";
 
 		private List<UIModal> modals = new List<UIModal>();
+        private Dictionary<ModalType, Queue<Action>> modalQueues = new Dictionary<ModalType, Queue<Action>>();
+        private Dictionary<ModalType, bool> isQueuedModalOpened = new Dictionary<ModalType, bool>();
 
-		protected override void Awake()
+        protected override void Awake()
 		{
 			base.Awake();
 
@@ -33,7 +35,44 @@ namespace Core
 		{
 		}
 
-		public void PushModal(UIModal modal)
+        public void EnqueueModal(ModalType type, Action modalCreateAction)
+        {
+            if (!modalQueues.ContainsKey(type))
+            {
+                modalQueues.Add(type, new Queue<Action>());
+
+                modalCreateAction();
+                isQueuedModalOpened.Add(type, true);
+            }
+            else
+            {
+                if (isQueuedModalOpened[type])
+                    modalQueues[type].Enqueue(modalCreateAction);
+                else
+                {
+                    modalCreateAction();
+                    isQueuedModalOpened[type] = true;
+                }
+            }
+        }
+
+        public void DequeueModal(ModalType type)
+        {
+            if (modalQueues.ContainsKey(type))
+            {
+                if (modalQueues[type].Count > 0)
+                {
+                    modalQueues[type].Dequeue()();
+                    isQueuedModalOpened[type] = true;
+                }
+                else
+                    isQueuedModalOpened[type] = false;
+            }
+            else
+                Debug.LogFormat("ModalType : {0} is not in queue", type.ToString());
+        }
+
+        public void PushModal(UIModal modal)
 		{
 			modals.Add(modal);
 
