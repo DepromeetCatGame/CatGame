@@ -16,6 +16,9 @@ namespace Core
         public EventSystem EventSystem { get; private set; }
         public Camera Camera { get; private set; }
 
+        public Canvas MainCanvas { get { return canvas; } }
+        private Canvas canvas;
+
         //모달의 시작 Order
         private const int kOrderOfModal = 10;
         //모달간의 Spacing
@@ -33,6 +36,7 @@ namespace Core
 
             EventSystem = GetComponentInChildren<EventSystem>();
             Camera = GetComponentInChildren<Camera>();
+            canvas = GetComponent<Canvas>();
         }
 
         public void Init()
