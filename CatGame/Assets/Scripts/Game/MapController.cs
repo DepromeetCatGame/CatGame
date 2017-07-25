@@ -20,6 +20,8 @@ public class MapController : SingletonBehaviour<MapController>
     private Transform cloud2Parent;
     [SerializeField]
     private Transform blockParent;
+    [SerializeField]
+    private Transform catParent;
 
     [SerializeField]
     private Transform moonParent;
@@ -38,6 +40,9 @@ public class MapController : SingletonBehaviour<MapController>
     private Cloud mapCloudPrefab;
     [SerializeField]
     private GameObject blockPrefab;
+
+    [SerializeField]
+    private List<Cat> catPrefabs;
 
     private GameObject moon;
     private List<GameObject> background2 = new List<GameObject>();
@@ -62,10 +67,19 @@ public class MapController : SingletonBehaviour<MapController>
     private float mount2Width;
     private float blockWidth;
 
+    private Cat cat;
+
     protected override void Awake()
     {
         CreateMap();
+        CreateCat(0);
         StartMap();
+    }
+
+    public void CreateCat(int index)
+    {
+        cat = Instantiate(catPrefabs[index], catParent);
+        cat.transform.localPosition = new Vector3(-3350, -1310, 0);
     }
 
     public void CreateMap()
